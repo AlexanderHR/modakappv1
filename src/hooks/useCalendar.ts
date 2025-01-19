@@ -13,7 +13,7 @@ export const useCalendar = () => {
       Toast.show({
         type: 'success',
         text1: 'Reminder added',
-        text2: 'The reminder was added to your calendar',
+        text2: 'The reminder was added to your calendar 🙂',
         position: 'bottom',
       });
     } catch (error) {
