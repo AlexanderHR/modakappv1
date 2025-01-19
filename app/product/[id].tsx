@@ -53,7 +53,7 @@ export default function ProductDetailsScreen() {
       <Stack.Screen
         options={{
           title: product?.title || 'Product Details',
-          animation: 'slide_from_bottom',
+          animation: 'none',
           headerBackButtonDisplayMode: 'minimal',
           headerStyle: {
             backgroundColor: Colors[colorScheme ?? 'light'].background,
@@ -71,14 +71,14 @@ export default function ProductDetailsScreen() {
                     removeFromWishlist(product.id);
                     Toast.show({
                       type: 'info',
-                      text1: 'Produto removido dos favoritos!',
+                      text1: 'Item removed from wishlist',
                       position: 'bottom',
                     });
                   } else {
                     addToWishlist(product);
                     Toast.show({
                       type: 'success',
-                      text1: 'Produto adicionado aos favoritos',
+                      text1: 'Item added to wishlist',
                       position: 'bottom',
                     });
                   }

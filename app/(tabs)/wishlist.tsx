@@ -28,7 +28,7 @@ export default function WithListScreen() {
           removeFromWishlist(item.id);
           Toast.show({
             type: 'info',
-            text1: 'Product removed from wishlist',
+            text1: 'Item removed from wishlist',
             position: 'bottom',
           });
         }}

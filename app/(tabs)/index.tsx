@@ -12,8 +12,16 @@ import { PressableScale } from '@/src/ui/components/PressableScale';
 import { useRouter } from 'expo-router';
 
 export default function IndexScreen() {
-  const { products, loading, error, hasMore, fetchProducts, loadMore, currentCategory } =
-    useProductStore();
+  const {
+    products,
+    loading,
+    error,
+    hasMore,
+    fetchProducts,
+    loadMore,
+    removeFilter,
+    currentCategory,
+  } = useProductStore();
   const [isGridView, setIsGridView] = useState(true);
   const colorScheme = useColorScheme();
   const router = useRouter();
@@ -168,7 +176,10 @@ export default function IndexScreen() {
           minIndexForVisible: 0,
           autoscrollToTopThreshold: 10,
         }}
-        onRefresh={fetchProducts}
+        onRefresh={() => {
+          removeFilter();
+          fetchProducts();
+        }}
         refreshing={loading}
         onEndReached={products.length > 0 ? handleEndReached : undefined}
         onEndReachedThreshold={0.5}

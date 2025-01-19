@@ -14,6 +14,7 @@ interface ProductState {
   loadMore: () => Promise<void>;
   // eslint-disable-next-line no-unused-vars
   setCurrentCategory: (category_: Category) => void;
+  removeFilter: () => void;
 }
 
 export const useProductStore = create<ProductState>((set, get) => ({
@@ -63,7 +64,10 @@ export const useProductStore = create<ProductState>((set, get) => ({
       set(state => ({ ...state, loading: false }));
     }
   },
-  setCurrentCategory: (category: Category) => {
+  setCurrentCategory: (category?: Category) => {
     set({ currentCategory: category });
+  },
+  removeFilter: () => {
+    set({ currentCategory: undefined });
   },
 }));
