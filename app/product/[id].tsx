@@ -7,7 +7,7 @@ import { useWishlistStore } from '@/src/products/store/useWishlistStore';
 import { PressableScale } from '@/src/ui/components/PressableScale';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -71,7 +71,7 @@ export default function ProductDetailsScreen() {
                     removeFromWishlist(product.id);
                     Toast.show({
                       type: 'info',
-                      text1: 'Produto removido dos favoritos',
+                      text1: 'Produto removido dos favoritos!',
                       position: 'bottom',
                     });
                   } else {
