@@ -1,27 +1,25 @@
 import { scale, verticalScale } from './styling';
 
-export const colors = {
-  primary: '#a3e635',
-  primaryLight: '#Oea5e9',
-  primaryDark: '#0369a1',
-  text: '#fff',
-  textLight: '#e5e5e5',
-  textLighter: '#d4d4d4',
-  white: '#fff',
-  black: '#000',
-  rose: '#ef4444',
-  green: '#16a34a',
-  neutral50: '#fafafa',
-  neutral100: '#f5f5f5',
-  neutral200: '#e5e5e5',
-  neutral300: '#d4d4d4',
-  neutral350: '#CCCCC',
-  neutral400: '#a3a3a3',
-  neutral500: '#737373',
-  neutral600: '#525252',
-  neutral700: '#404040',
-  neutral800: '#262626',
-  neutral900: '#171717',
+const tintColorLight = '#0a7ea4';
+const tintColorDark = '#fff';
+
+export const Colors = {
+  light: {
+    text: '#11181C',
+    background: '#f1efe3',
+    tint: tintColorLight,
+    icon: '#687076',
+    tabIconDefault: '#687076',
+    tabIconSelected: tintColorLight,
+  },
+  dark: {
+    text: '#ECEDEE',
+    background: '#151718',
+    tint: tintColorDark,
+    icon: '#9BA1A6',
+    tabIconDefault: '#9BA1A6',
+    tabIconSelected: tintColorDark,
+  },
 };
 
 export const spacingX = {

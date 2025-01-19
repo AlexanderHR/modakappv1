@@ -1,12 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Image, Platform, SafeAreaView, StatusBar, StyleSheet, useColorScheme } from 'react-native';
 
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { Colors } from '@/constants/Colors';
-import { useWishlistStore } from '@/src/products/store/useWishlistStore';
-import { Product } from '@/src/products/types/product';
+import { useWishlistStore } from '@/src/modules/products/store/useWishlistStore';
+import { Product } from '@/src/modules/products/types/product';
 import { PressableScale } from '@/src/ui/components/PressableScale';
+import { ThemedText } from '@/src/ui/components/ThemedText';
+import { ThemedView } from '@/src/ui/components/ThemedView';
+import { Colors } from '@/src/ui/theme';
 import { router } from 'expo-router';
 import { FlatList } from 'react-native';
 import Toast from 'react-native-toast-message';
@@ -16,7 +16,10 @@ export default function WithListScreen() {
   const colorScheme = useColorScheme();
 
   const renderItem = ({ item }: { item: Product }) => (
-    <PressableScale style={styles.productCard} onPress={() => router.push(`/product/${item.id}`)}>
+    <PressableScale
+      style={styles.productCard}
+      onPress={() => router.push(`/product/${item.id}?from=wishlist`)}
+    >
       <Image source={{ uri: item.thumbnail }} style={styles.productImage} />
       <ThemedView style={styles.productInfo}>
         <ThemedText style={styles.productTitle}>{item.title}</ThemedText>
@@ -29,6 +32,7 @@ export default function WithListScreen() {
             type: 'info',
             text1: 'Item removed from wishlist',
             position: 'bottom',
+            visibilityTime: 1500,
           });
         }}
       >

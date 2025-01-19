@@ -1,6 +1,6 @@
 import Toast from 'react-native-toast-message';
+import { Product } from '../modules/products/types/product';
 import CalendarManager from '../native/CalendarManager';
-import { Product } from '../products/types/product';
 
 export const useCalendar = () => {
   const addProductReminder = async (product: Product, reminderDate: Date) => {

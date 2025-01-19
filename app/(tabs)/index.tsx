@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, StyleSheet, useColorScheme } from 'react-native';
 
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import { Colors } from '@/constants/Colors';
-import { useProductStore } from '@/src/products/store/useProductStore';
-import { Product } from '@/src/products/types/product';
-import { formatCategoryText } from '@/src/products/util';
+import { useProductStore } from '@/src/modules/products/store/useProductStore';
+import { Product } from '@/src/modules/products/types/product';
+import { formatCategoryText } from '@/src/modules/products/util';
+import { IconSymbol } from '@/src/ui/components/IconSymbol';
 import { PressableScale } from '@/src/ui/components/PressableScale';
+import { ThemedText } from '@/src/ui/components/ThemedText';
+import { ThemedView } from '@/src/ui/components/ThemedView';
+import { Colors } from '@/src/ui/theme';
 import { useRouter } from 'expo-router';
 
 export default function IndexScreen() {

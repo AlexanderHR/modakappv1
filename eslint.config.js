@@ -8,7 +8,7 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
 
 export default [
   {
-    ignores: ['node_modules/**', 'dist/**', 'build/**', 'coverage/**', '*.d.ts'],
+    ignores: ['node_modules/**', '.expo/**', 'dist/**', 'build/**', 'coverage/**', '*.d.ts'],
   },
   eslint.configs.recommended,
   {
@@ -33,6 +33,13 @@ export default [
         process: 'readonly',
         require: 'readonly',
         fetch: 'readonly',
+        jest: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        setTimeout: 'readonly',
       },
     },
     settings: {

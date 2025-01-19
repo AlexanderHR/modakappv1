@@ -1,11 +1,11 @@
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { Colors } from '@/constants/Colors';
-import { ImageCarousel } from '@/src/components/ImageCarousel';
 import { useCalendar } from '@/src/hooks/useCalendar';
-import { useProductDetailsStore } from '@/src/products/store/useProductDetailsStore';
-import { useWishlistStore } from '@/src/products/store/useWishlistStore';
+import { useProductDetailsStore } from '@/src/modules/products/store/useProductDetailsStore';
+import { useWishlistStore } from '@/src/modules/products/store/useWishlistStore';
+import { ImageCarousel } from '@/src/ui/components/ImageCarousel';
 import { PressableScale } from '@/src/ui/components/PressableScale';
+import { ThemedText } from '@/src/ui/components/ThemedText';
+import { ThemedView } from '@/src/ui/components/ThemedView';
+import { Colors } from '@/src/ui/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import React, { useEffect } from 'react';
@@ -19,6 +19,8 @@ import {
 import Toast from 'react-native-toast-message';
 
 export default function ProductDetailsScreen() {
+  const params = useLocalSearchParams();
+  const from = params.from as string;
   const { id } = useLocalSearchParams<{ id: string }>();
   const { product, loading, error, fetchProductDetails, reset } = useProductDetailsStore();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore();
@@ -34,6 +36,14 @@ export default function ProductDetailsScreen() {
     };
   }, [id]);
 
+  const handleBack = () => {
+    if (from === 'wishlist') {
+      router.back();
+    } else {
+      router.replace('/(tabs)');
+    }
+  };
+
   return (
     <>
       <Stack.Screen
@@ -43,15 +53,15 @@ export default function ProductDetailsScreen() {
             : error
               ? 'Product not found'
               : product?.title || 'Product Details',
-          animation: 'none',
+          animation: 'simple_push',
           headerBackButtonDisplayMode: 'minimal',
           headerStyle: {
             backgroundColor: Colors[colorScheme ?? 'light'].background,
           },
           headerShadowVisible: false,
           headerLeft: () => (
-            <PressableScale onPress={() => router.replace('/(tabs)')}>
-              <Ionicons name="chevron-back" size={24} color={Colors[colorScheme ?? 'light'].text} />
+            <PressableScale testID="back-button" onPress={handleBack} style={styles.headerButton}>
+              <Ionicons name="chevron-back" size={24} />
             </PressableScale>
           ),
           headerRight: () => {
@@ -92,12 +102,16 @@ export default function ProductDetailsScreen() {
 
       {loading ? (
         <ThemedView style={styles.loadingContainer}>
-          <ActivityIndicator size="large" />
+          <ActivityIndicator testID="loading-indicator" size="large" />
         </ThemedView>
       ) : error || !product ? (
         <ThemedView style={styles.errorContainer}>
           <ThemedText style={styles.errorText}>Error loading product details 😔</ThemedText>
-          <PressableScale style={styles.homeButton} onPress={() => router.replace('/(tabs)')}>
+          <PressableScale
+            testID="back-to-home-button"
+            style={styles.homeButton}
+            onPress={() => router.replace('/(tabs)')}
+          >
             <ThemedText style={styles.buttonText}>Back to Home</ThemedText>
           </PressableScale>
         </ThemedView>
@@ -223,5 +237,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 16,
     minWidth: 200,
+  },
+  headerButton: {
+    padding: 8,
   },
 });

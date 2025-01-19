@@ -1,12 +1,11 @@
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import { Colors } from '@/constants/Colors';
-import { useCategoryStore } from '@/src/products/store/useCategoryStore';
-import { useProductStore } from '@/src/products/store/useProductStore';
-import { Category } from '@/src/products/types/category';
-import { formatCategoryText } from '@/src/products/util';
+import { useCategoryStore } from '@/src/modules/products/store/useCategoryStore';
+import { useProductStore } from '@/src/modules/products/store/useProductStore';
+import { Category } from '@/src/modules/products/types/category';
+import { IconSymbol } from '@/src/ui/components/IconSymbol';
 import { PressableScale } from '@/src/ui/components/PressableScale';
+import { ThemedText } from '@/src/ui/components/ThemedText';
+import { ThemedView } from '@/src/ui/components/ThemedView';
+import { Colors } from '@/src/ui/theme';
 import { Stack, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, TextInput, View } from 'react-native';
@@ -74,9 +73,7 @@ export default function SearchScreen() {
                   style={styles.categoryTag}
                   onPress={() => handleCategorySelect(category)}
                 >
-                  <ThemedText style={styles.categoryText}>
-                    {formatCategoryText(category)}
-                  </ThemedText>
+                  <ThemedText style={styles.categoryText}>{category.nameWithEmoji}</ThemedText>
                 </PressableScale>
               ))}
             </View>
