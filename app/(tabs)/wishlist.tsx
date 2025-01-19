@@ -20,7 +20,6 @@ export default function WithListScreen() {
       <Image source={{ uri: item.thumbnail }} style={styles.productImage} />
       <ThemedView style={styles.productInfo}>
         <ThemedText style={styles.productTitle}>{item.title}</ThemedText>
-        <ThemedText style={styles.productPrice}>${item.price}</ThemedText>
       </ThemedView>
       <PressableScale
         style={styles.removeButton}

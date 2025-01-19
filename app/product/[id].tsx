@@ -2,11 +2,12 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { Colors } from '@/constants/Colors';
 import { ImageCarousel } from '@/src/components/ImageCarousel';
+import { useCalendar } from '@/src/hooks/useCalendar';
 import { useProductDetailsStore } from '@/src/products/store/useProductDetailsStore';
 import { useWishlistStore } from '@/src/products/store/useWishlistStore';
 import { PressableScale } from '@/src/ui/components/PressableScale';
 import { Ionicons } from '@expo/vector-icons';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import React, { useEffect } from 'react';
 import {
   ActivityIndicator,
@@ -22,43 +23,37 @@ export default function ProductDetailsScreen() {
   const { product, loading, error, fetchProductDetails, reset } = useProductDetailsStore();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore();
   const colorScheme = useColorScheme();
+  const { addProductReminder } = useCalendar();
 
   useEffect(() => {
     if (id) {
       fetchProductDetails(parseInt(id));
     }
     return () => {
-      reset(); // Limpa o estado ao sair da tela
+      reset();
     };
   }, [id]);
-
-  if (loading) {
-    return (
-      <ThemedView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
-      </ThemedView>
-    );
-  }
-
-  if (error || !product) {
-    return (
-      <ThemedView style={styles.errorContainer}>
-        <ThemedText style={styles.errorText}>Error loading product details 😔</ThemedText>
-      </ThemedView>
-    );
-  }
 
   return (
     <>
       <Stack.Screen
         options={{
-          title: product?.title || 'Product Details',
+          title: loading
+            ? 'Loading...'
+            : error
+              ? 'Product not found'
+              : product?.title || 'Product Details',
           animation: 'none',
           headerBackButtonDisplayMode: 'minimal',
           headerStyle: {
             backgroundColor: Colors[colorScheme ?? 'light'].background,
           },
           headerShadowVisible: false,
+          headerLeft: () => (
+            <PressableScale onPress={() => router.replace('/(tabs)')}>
+              <Ionicons name="chevron-back" size={24} color={Colors[colorScheme ?? 'light'].text} />
+            </PressableScale>
+          ),
           headerRight: () => {
             const isWishlisted = product ? isInWishlist(product.id) : false;
 
@@ -94,38 +89,62 @@ export default function ProductDetailsScreen() {
           },
         }}
       />
-      <ScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={() => id && fetchProductDetails(parseInt(id))}
-          />
-        }
-        style={[styles.container, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}
-      >
-        <ImageCarousel images={product.images} />
-        <ThemedView style={styles.content}>
-          <ThemedText style={styles.title}>{product.title}</ThemedText>
-          <ThemedText style={styles.brand}>{product.brand}</ThemedText>
-          <ThemedText style={styles.price}>${product.price}</ThemedText>
-          <ThemedText style={styles.description}>{product.description}</ThemedText>
 
-          <ThemedView style={styles.infoContainer}>
-            <ThemedText style={styles.infoLabel}>Rating:</ThemedText>
-            <ThemedText style={styles.infoValue}>{product.rating} ⭐</ThemedText>
-          </ThemedView>
-
-          <ThemedView style={styles.infoContainer}>
-            <ThemedText style={styles.infoLabel}>Stock:</ThemedText>
-            <ThemedText style={styles.infoValue}>{product.stock} units</ThemedText>
-          </ThemedView>
-
-          <ThemedView style={styles.infoContainer}>
-            <ThemedText style={styles.infoLabel}>Category:</ThemedText>
-            <ThemedText style={styles.infoValue}>{product.category}</ThemedText>
-          </ThemedView>
+      {loading ? (
+        <ThemedView style={styles.loadingContainer}>
+          <ActivityIndicator size="large" />
         </ThemedView>
-      </ScrollView>
+      ) : error || !product ? (
+        <ThemedView style={styles.errorContainer}>
+          <ThemedText style={styles.errorText}>Error loading product details 😔</ThemedText>
+          <PressableScale style={styles.homeButton} onPress={() => router.replace('/(tabs)')}>
+            <ThemedText style={styles.buttonText}>Back to Home</ThemedText>
+          </PressableScale>
+        </ThemedView>
+      ) : (
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={() => id && fetchProductDetails(parseInt(id))}
+            />
+          }
+          style={[styles.container, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}
+        >
+          <ImageCarousel images={product.images} />
+          <ThemedView style={styles.content}>
+            <ThemedText style={styles.title}>{product.title}</ThemedText>
+            <ThemedText style={styles.brand}>{product.brand}</ThemedText>
+            <ThemedText style={styles.price}>${product.price}</ThemedText>
+            <ThemedText style={styles.description}>{product.description}</ThemedText>
+
+            <ThemedView style={styles.infoContainer}>
+              <ThemedText style={styles.infoLabel}>Rating:</ThemedText>
+              <ThemedText style={styles.infoValue}>{product.rating} ⭐</ThemedText>
+            </ThemedView>
+
+            <ThemedView style={styles.infoContainer}>
+              <ThemedText style={styles.infoLabel}>Stock:</ThemedText>
+              <ThemedText style={styles.infoValue}>{product.stock} units</ThemedText>
+            </ThemedView>
+
+            <ThemedView style={styles.infoContainer}>
+              <ThemedText style={styles.infoLabel}>Category:</ThemedText>
+              <ThemedText style={styles.infoValue}>{product.category}</ThemedText>
+            </ThemedView>
+
+            <PressableScale
+              style={styles.reminderButton}
+              onPress={() => {
+                const reminderDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24hs
+                addProductReminder(product, reminderDate);
+              }}
+            >
+              <ThemedText style={styles.buttonText}>Add Purchase Reminder</ThemedText>
+            </PressableScale>
+          </ThemedView>
+        </ScrollView>
+      )}
     </>
   );
 }
@@ -184,5 +203,25 @@ const styles = StyleSheet.create({
   },
   infoValue: {
     fontSize: 16,
+  },
+  reminderButton: {
+    backgroundColor: Colors.light.tint,
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  homeButton: {
+    backgroundColor: Colors.light.tint,
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 16,
+    minWidth: 200,
   },
 });
