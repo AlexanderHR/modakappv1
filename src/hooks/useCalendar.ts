@@ -20,7 +20,7 @@ export const useCalendar = () => {
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: error instanceof Error ? error.message : 'Failed to add reminder',
+        text2: error instanceof Error ? error.message : 'Failed to add reminder ☹️',
         position: 'bottom',
       });
     }
