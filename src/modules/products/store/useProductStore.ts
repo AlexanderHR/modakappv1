@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { productMapper } from '../mappers/productMapper';
-import { ProductService } from '../services/api';
+import { ProductService } from '../services/productService';
 import { Category } from '../types/category';
-import { Product } from '../types/product';
+import { Product, SortByConfig } from '../types/product';
 
 interface ProductState {
   products: Product[];
@@ -16,6 +16,9 @@ interface ProductState {
   // eslint-disable-next-line no-unused-vars
   setCurrentCategory: (category_: Category) => void;
   removeFilter: () => void;
+  sortByConfig: SortByConfig;
+  // eslint-disable-next-line no-unused-vars
+  setSortByConfig: (sortByConfig: SortByConfig) => void;
 }
 
 export const useProductStore = create<ProductState>((set, get) => ({
@@ -25,12 +28,20 @@ export const useProductStore = create<ProductState>((set, get) => ({
   hasMore: true,
   page: 0,
   currentCategory: undefined,
-
+  sortByConfig: {
+    sortBy: '',
+    order: 'asc',
+  },
   fetchProducts: async () => {
     try {
       const state = get();
       set({ loading: true, error: null });
-      const response = await ProductService.fetchProducts(0, 10, state.currentCategory?.slug);
+      const response = await ProductService.getProducts(
+        0,
+        10,
+        state.currentCategory?.slug,
+        state.sortByConfig
+      );
       const data = productMapper.toProductResponse(response);
       set({
         products: data.products,
@@ -50,10 +61,11 @@ export const useProductStore = create<ProductState>((set, get) => ({
     try {
       set({ loading: true });
       const nextPage = state.page + 1;
-      const response = await ProductService.fetchProducts(
+      const response = await ProductService.getProducts(
         nextPage * 10,
         10,
-        state.currentCategory?.slug
+        state.currentCategory?.slug,
+        state.sortByConfig
       );
       const data = productMapper.toProductResponse(response);
       set({
@@ -71,5 +83,8 @@ export const useProductStore = create<ProductState>((set, get) => ({
   },
   removeFilter: () => {
     set({ currentCategory: undefined });
+  },
+  setSortByConfig: (sortByConfig: SortByConfig) => {
+    set({ sortByConfig });
   },
 }));

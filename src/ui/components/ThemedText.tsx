@@ -6,6 +6,7 @@ export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
   type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
+  variant?: 'infoLabel' | undefined;
 };
 
 export function ThemedText({
@@ -13,10 +14,16 @@ export function ThemedText({
   lightColor,
   darkColor,
   type = 'default',
+  variant = undefined,
   ...rest
 }: ThemedTextProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
-
+  const customStyle: any = {};
+  if (variant === 'infoLabel') {
+    customStyle.fontSize = 16;
+    customStyle.fontWeight = '600';
+    customStyle.width = 100;
+  }
   return (
     <Text
       style={[
@@ -27,6 +34,7 @@ export function ThemedText({
         type === 'subtitle' ? styles.subtitle : undefined,
         type === 'link' ? styles.link : undefined,
         style,
+        customStyle,
       ]}
       {...rest}
     />

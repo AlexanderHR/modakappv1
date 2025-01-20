@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Image, StyleSheet, useColorScheme } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, FlatList, Image, StyleSheet, useColorScheme, View } from 'react-native';
+import { Modalize } from 'react-native-modalize';
 
 import { useProductStore } from '@/src/modules/products/store/useProductStore';
 import { Product } from '@/src/modules/products/types/product';
-import { formatCategoryText } from '@/src/modules/products/util';
 import { IconSymbol } from '@/src/ui/components/IconSymbol';
 import { PressableScale } from '@/src/ui/components/PressableScale';
+import { SortModal, SortOption } from '@/src/ui/components/SortModal';
 import { ThemedText } from '@/src/ui/components/ThemedText';
 import { ThemedView } from '@/src/ui/components/ThemedView';
 import { Colors } from '@/src/ui/theme';
@@ -21,14 +22,17 @@ export default function IndexScreen() {
     loadMore,
     removeFilter,
     currentCategory,
+    setSortByConfig,
+    sortByConfig,
   } = useProductStore();
   const [isGridView, setIsGridView] = useState(true);
   const colorScheme = useColorScheme();
   const router = useRouter();
+  const modalizeRef = useRef<Modalize>(null);
 
   useEffect(() => {
     fetchProducts();
-  }, [currentCategory]);
+  }, [currentCategory, sortByConfig]);
 
   const handleEndReached = useCallback(() => {
     if (!loading && hasMore) {
@@ -68,6 +72,10 @@ export default function IndexScreen() {
             <ThemedText type="defaultSemiBold" style={styles.price}>
               ${item.price}
             </ThemedText>
+            <ThemedView style={styles.ratingContainer}>
+              <IconSymbol name="star.fill" size={12} color="#FFD700" />
+              <ThemedText style={styles.rating}>{item.rating}</ThemedText>
+            </ThemedView>
           </ThemedView>
         </ThemedView>
       </PressableScale>
@@ -90,11 +98,15 @@ export default function IndexScreen() {
             <ThemedText type="defaultSemiBold" style={styles.price}>
               ${item.price}
             </ThemedText>
+            <ThemedView style={styles.ratingContainer}>
+              <IconSymbol name="star.fill" size={12} color="#FFD700" />
+              <ThemedText style={styles.rating}>{item.rating}</ThemedText>
+            </ThemedView>
           </ThemedView>
         </ThemedView>
       </PressableScale>
     ),
-    []
+    [handleProductPress]
   );
 
   const renderEmptyList = useCallback(
@@ -131,6 +143,13 @@ export default function IndexScreen() {
     router.push('/search');
   }, [router]);
 
+  const handleSort = (option: SortOption) => {
+    setSortByConfig({
+      sortBy: option.value,
+      order: option.order,
+    });
+  };
+
   return (
     <ThemedView
       style={[styles.container, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}
@@ -138,23 +157,27 @@ export default function IndexScreen() {
       <ThemedView style={styles.header}>
         {currentCategory ? (
           <ThemedView style={styles.categoryTag}>
-            <ThemedText style={styles.categoryText}>
-              {formatCategoryText(currentCategory)}
-            </ThemedText>
+            <ThemedText style={styles.categoryText}>{currentCategory.nameWithEmoji}</ThemedText>
           </ThemedView>
         ) : (
           <ThemedText style={styles.headerTitle}>MODAK TC</ThemedText>
         )}
         <ThemedView style={styles.headerButtons}>
-          <PressableScale onPress={handleSearchPress} style={styles.headerButton}>
-            <IconSymbol name="magnifyingglass" size={24} color={Colors.light.tint} />
-          </PressableScale>
+          <View style={styles.searchButtonContainer}>
+            <PressableScale onPress={handleSearchPress} style={styles.headerButton}>
+              <IconSymbol name="magnifyingglass" size={24} color={Colors.light.tint} />
+            </PressableScale>
+            {!!currentCategory && <View style={styles.filterBadge} />}
+          </View>
           <PressableScale onPress={() => setIsGridView(!isGridView)} style={styles.headerButton}>
             <IconSymbol
               name={isGridView ? 'square.grid.2x2' : 'list.bullet'}
               size={24}
               color={Colors.light.tint}
             />
+          </PressableScale>
+          <PressableScale onPress={() => modalizeRef.current?.open()} style={styles.headerButton}>
+            <IconSymbol name="arrow.up.arrow.down" size={24} color={Colors.light.tint} />
           </PressableScale>
         </ThemedView>
       </ThemedView>
@@ -186,6 +209,7 @@ export default function IndexScreen() {
         ListFooterComponent={renderFooter}
         ListEmptyComponent={!loading ? renderEmptyList : undefined}
       />
+      <SortModal ref={modalizeRef} onSelect={handleSort} />
     </ThemedView>
   );
 }
@@ -345,5 +369,28 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     textAlign: 'center',
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  rating: {
+    fontSize: 12,
+    color: '#666',
+  },
+  searchButtonContainer: {
+    position: 'relative',
+  },
+  filterBadge: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#ec5353',
+    borderWidth: 1,
+    borderColor: '#fff',
   },
 });

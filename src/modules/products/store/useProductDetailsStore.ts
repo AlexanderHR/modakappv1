@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { productMapper } from '../mappers/productMapper';
-import { ProductService } from '../services/api';
+import { ProductService } from '../services/productService';
 import { ProductDetails } from '../types/product';
 
 type State = {
@@ -23,7 +23,7 @@ export const useProductDetailsStore = create<State & Actions>()(set => ({
   fetchProductDetails: async (id: number) => {
     try {
       set({ loading: true, error: null });
-      const response = await ProductService.fetchProductDetails(id);
+      const response = await ProductService.getProductDetails(id);
       const data = productMapper.toProductDetailsResponse(response);
       set({ product: data, loading: false });
     } catch {

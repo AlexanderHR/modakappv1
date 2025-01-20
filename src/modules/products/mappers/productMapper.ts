@@ -8,6 +8,7 @@ export const productMapper = {
       description: raw.description,
       price: raw.price,
       thumbnail: raw.thumbnail,
+      rating: raw.rating,
     };
   },
 

@@ -4,6 +4,7 @@ export interface Product {
   description: string;
   price: number;
   thumbnail: string;
+  rating: number;
 }
 
 export interface ProductResponse {
@@ -17,4 +18,9 @@ export interface ProductDetails extends Product {
   rating: number;
   stock: number;
   category: string;
+}
+
+export interface SortByConfig {
+  sortBy: string;
+  order: 'asc' | 'desc';
 }

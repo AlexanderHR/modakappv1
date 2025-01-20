@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { categoryMapper } from '../mappers/categoryMapper';
-import { ProductService } from '../services/api';
+import { categoriesService } from '../services/categoriesService';
 import { Category } from '../types/category';
 
 interface CategoryState {
@@ -18,7 +18,7 @@ export const useCategoryStore = create<CategoryState>(set => ({
   fetchCategories: async () => {
     try {
       set({ loading: true, error: null });
-      const response = await ProductService.fetchCategories();
+      const response = await categoriesService.getCategories();
 
       const data = categoryMapper
         .toCategoryList(response)

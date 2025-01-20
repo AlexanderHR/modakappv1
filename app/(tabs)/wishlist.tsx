@@ -102,7 +102,6 @@ const styles = StyleSheet.create({
   },
   productCard: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
     borderRadius: 12,
     overflow: 'hidden',
     elevation: 4,
