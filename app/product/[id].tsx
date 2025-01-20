@@ -1,21 +1,19 @@
 import { useCalendar } from '@/src/hooks/useCalendar';
 import { useProductDetailsStore } from '@/src/modules/products/store/useProductDetailsStore';
 import { useWishlistStore } from '@/src/modules/products/store/useWishlistStore';
+import EmojiAmination, { EmojiAnimationRef } from '@/src/ui/components/EmojiAnimation';
+import ErrorView from '@/src/ui/components/ErrorView';
 import { ImageCarousel } from '@/src/ui/components/ImageCarousel';
+import { LoadingView } from '@/src/ui/components/LoadingView';
+import MainContainer from '@/src/ui/components/MainContainer';
 import { PressableScale } from '@/src/ui/components/PressableScale';
 import { ThemedText } from '@/src/ui/components/ThemedText';
 import { ThemedView } from '@/src/ui/components/ThemedView';
 import { Colors } from '@/src/ui/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
-import React, { useEffect } from 'react';
-import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  useColorScheme,
-} from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet, useColorScheme } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 export default function ProductDetailsScreen() {
@@ -26,6 +24,7 @@ export default function ProductDetailsScreen() {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore();
   const colorScheme = useColorScheme();
   const { addProductReminder } = useCalendar();
+  const emojiAnimationRef = useRef<EmojiAnimationRef>(null);
 
   useEffect(() => {
     if (id) {
@@ -44,23 +43,39 @@ export default function ProductDetailsScreen() {
     }
   };
 
+  const handleAddProductReminder = async () => {
+    if (!product) return;
+    emojiAnimationRef?.current?.startAnimation();
+    const additionalValue = 24 * 60 * 60 * 1000; // 24hs
+    const reminderDate = new Date(Date.now() + additionalValue);
+    addProductReminder(product, reminderDate);
+  };
+
+  const onRefresh = () => {
+    if (id) {
+      fetchProductDetails(parseInt(id));
+    }
+  };
+
+  const getScreenTitle = () => {
+    if (loading) return 'Loading...';
+    if (error) return 'Product not found';
+    if (product?.title) return product.title;
+    return 'Product Details';
+  };
+
   return (
     <>
       <Stack.Screen
         options={{
-          title: loading
-            ? 'Loading...'
-            : error
-              ? 'Product not found'
-              : product?.title || 'Product Details',
+          title: getScreenTitle(),
           animation: 'simple_push',
-          headerBackButtonDisplayMode: 'minimal',
           headerStyle: {
             backgroundColor: Colors[colorScheme ?? 'light'].background,
           },
           headerShadowVisible: false,
           headerLeft: () => (
-            <PressableScale testID="back-button" onPress={handleBack} style={styles.headerButton}>
+            <PressableScale testID="back-button" onPress={handleBack}>
               <Ionicons name="chevron-back" size={24} />
             </PressableScale>
           ),
@@ -101,63 +116,45 @@ export default function ProductDetailsScreen() {
       />
 
       {loading ? (
-        <ThemedView style={styles.loadingContainer}>
-          <ActivityIndicator testID="loading-indicator" size="large" />
-        </ThemedView>
+        <LoadingView />
       ) : error || !product ? (
-        <ThemedView style={styles.errorContainer}>
-          <ThemedText style={styles.errorText}>Error loading product details 😔</ThemedText>
-          <PressableScale
-            testID="back-to-home-button"
-            style={styles.homeButton}
-            onPress={() => router.replace('/(tabs)')}
-          >
-            <ThemedText style={styles.buttonText}>Back to Home</ThemedText>
-          </PressableScale>
-        </ThemedView>
+        <ErrorView errorDescription="Error loading product details 😔" />
       ) : (
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={loading}
-              onRefresh={() => id && fetchProductDetails(parseInt(id))}
-            />
-          }
-          style={[styles.container, { backgroundColor: Colors[colorScheme ?? 'light'].background }]}
-        >
+        <MainContainer loading={loading} onRefresh={onRefresh}>
           <ImageCarousel images={product.images} />
-          <ThemedView style={styles.content}>
+          <ThemedView variant="content">
             <ThemedText style={styles.title}>{product.title}</ThemedText>
             <ThemedText style={styles.brand}>{product.brand}</ThemedText>
             <ThemedText style={styles.price}>${product.price}</ThemedText>
             <ThemedText style={styles.description}>{product.description}</ThemedText>
 
-            <ThemedView style={styles.infoContainer}>
-              <ThemedText style={styles.infoLabel}>Rating:</ThemedText>
-              <ThemedText style={styles.infoValue}>{product.rating} ⭐</ThemedText>
+            <ThemedView variant="container">
+              <ThemedText type="defaultSemiBold" style={styles.infoLabel}>
+                Rating:
+              </ThemedText>
+              <ThemedText>{product.rating} ⭐</ThemedText>
             </ThemedView>
 
-            <ThemedView style={styles.infoContainer}>
-              <ThemedText style={styles.infoLabel}>Stock:</ThemedText>
-              <ThemedText style={styles.infoValue}>{product.stock} units</ThemedText>
+            <ThemedView variant="container">
+              <ThemedText type="defaultSemiBold" style={styles.infoLabel}>
+                Stock:
+              </ThemedText>
+              <ThemedText>{product.stock} units</ThemedText>
             </ThemedView>
 
-            <ThemedView style={styles.infoContainer}>
-              <ThemedText style={styles.infoLabel}>Category:</ThemedText>
-              <ThemedText style={styles.infoValue}>{product.category}</ThemedText>
+            <ThemedView variant="container">
+              <ThemedText type="defaultSemiBold" style={styles.infoLabel}>
+                Category:
+              </ThemedText>
+              <ThemedText>{product.category}</ThemedText>
             </ThemedView>
 
-            <PressableScale
-              style={styles.reminderButton}
-              onPress={() => {
-                const reminderDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24hs
-                addProductReminder(product, reminderDate);
-              }}
-            >
+            <PressableScale style={styles.reminderButton} onPress={handleAddProductReminder}>
+              <EmojiAmination ref={emojiAnimationRef} />
               <ThemedText style={styles.buttonText}>Add Purchase Reminder</ThemedText>
             </PressableScale>
           </ThemedView>
-        </ScrollView>
+        </MainContainer>
       )}
     </>
   );
@@ -166,21 +163,6 @@ export default function ProductDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  errorText: {
-    fontSize: 16,
-    textAlign: 'center',
   },
   content: {
     padding: 16,
@@ -211,13 +193,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   infoLabel: {
-    fontSize: 16,
-    fontWeight: '600',
     width: 100,
   },
-  infoValue: {
-    fontSize: 16,
-  },
+
   reminderButton: {
     backgroundColor: Colors.light.tint,
     padding: 12,
@@ -229,16 +207,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
-  },
-  homeButton: {
-    backgroundColor: Colors.light.tint,
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 16,
-    minWidth: 200,
-  },
-  headerButton: {
-    padding: 8,
   },
 });

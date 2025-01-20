@@ -25,6 +25,7 @@ export const useProductDetailsStore = create<State & Actions>()(set => ({
       set({ loading: true, error: null });
       const response = await ProductService.getProductDetails(id);
       const data = productMapper.toProductDetailsResponse(response);
+
       set({ product: data, loading: false });
     } catch {
       set({ error: 'Error loading product details', loading: false });
