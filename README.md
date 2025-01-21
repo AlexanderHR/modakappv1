@@ -1,6 +1,7 @@
 # ModakApp
 
 [▶️ Watch Demo Video](https://vimeo.com/1048926840?share=copy)
+or [Download Video](https://wetransfer.com/downloads/fd1b5066a6875eeda1ebd2bfd41fee7520250121172754/4c42f36e3895148f502d1220ea957e0a20250121172754/84d051?t_exp=1737739674&t_lsid=b6db29cc-57d5-4657-9b60-dff0fb39dc5a&t_network=email&t_rid=Z29vZ2xlLW9hdXRoMnwxMTU3NTY3OTM0OTYxNzI5MzMzOTQ%3D&t_s=download_link&t_ts=1737480474&utm_campaign=TRN_TDL_01&utm_source=sendgrid&utm_medium=email&trk=TRN_TDL_01)
 
 ## Prerequisites
 
