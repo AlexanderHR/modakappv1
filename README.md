@@ -1,5 +1,7 @@
 # ModakApp
 
+[▶️ Watch Demo Video](https://vimeo.com/1048926840)
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed:
