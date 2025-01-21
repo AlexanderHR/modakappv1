@@ -34,11 +34,14 @@ export default function IndexScreen() {
     fetchProducts();
   }, [currentCategory, sortByConfig]);
 
-  const handleEndReached = useCallback(() => {
-    if (!loading && hasMore) {
-      loadMore();
-    }
-  }, [loading, hasMore, loadMore]);
+  const handleEndReached = useCallback(
+    ({ distanceFromEnd }: { distanceFromEnd: number }) => {
+      if (distanceFromEnd > 0 && !loading && hasMore) {
+        loadMore();
+      }
+    },
+    [loading, hasMore]
+  );
 
   const renderFooter = useCallback(() => {
     if (!loading || !products.length) return null;
@@ -59,7 +62,11 @@ export default function IndexScreen() {
 
   const renderGridItem = useCallback(
     ({ item }: { item: Product }) => (
-      <PressableScale style={styles.productCard} onPress={() => handleProductPress(item.id)}>
+      <PressableScale
+        testID={`product-card-${item.id}`}
+        style={styles.productCard}
+        onPress={() => handleProductPress(item.id)}
+      >
         <Image source={{ uri: item.thumbnail }} style={styles.productImage} />
         <ThemedView style={styles.productInfo}>
           <ThemedText type="defaultSemiBold" numberOfLines={1}>
@@ -85,7 +92,11 @@ export default function IndexScreen() {
 
   const renderListItem = useCallback(
     ({ item }: { item: Product }) => (
-      <PressableScale style={styles.listItemCard} onPress={() => handleProductPress(item.id)}>
+      <PressableScale
+        testID={`product-card-${item.id}`}
+        style={styles.listItemCard}
+        onPress={() => handleProductPress(item.id)}
+      >
         <Image source={{ uri: item.thumbnail }} style={styles.listItemImage} />
         <ThemedView style={styles.listItemInfo}>
           <ThemedText type="defaultSemiBold" numberOfLines={1}>
@@ -182,6 +193,7 @@ export default function IndexScreen() {
         </ThemedView>
       </ThemedView>
       <FlatList
+        testID="products-grid"
         key={isGridView ? 'grid' : 'list'}
         data={products}
         renderItem={isGridView ? renderGridItem : renderListItem}
@@ -190,7 +202,7 @@ export default function IndexScreen() {
         showsVerticalScrollIndicator={false}
         removeClippedSubviews={true}
         updateCellsBatchingPeriod={50}
-        initialNumToRender={6}
+        initialNumToRender={10}
         maxToRenderPerBatch={5}
         windowSize={3}
         numColumns={isGridView ? 2 : 1}
@@ -201,11 +213,10 @@ export default function IndexScreen() {
         }}
         onRefresh={() => {
           removeFilter();
-          fetchProducts();
         }}
         refreshing={loading}
-        onEndReached={products.length > 0 ? handleEndReached : undefined}
-        onEndReachedThreshold={0.5}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.1}
         ListFooterComponent={renderFooter}
         ListEmptyComponent={!loading ? renderEmptyList : undefined}
       />

@@ -120,7 +120,7 @@ export default function ProductDetailsScreen() {
       ) : error || !product ? (
         <ErrorView errorDescription="Error loading product details 😔" />
       ) : (
-        <MainContainer loading={loading} onRefresh={onRefresh}>
+        <MainContainer testID="product-details" loading={loading} onRefresh={onRefresh}>
           <ImageCarousel images={product.images} />
           <ThemedView variant="content">
             <ThemedText style={styles.title}>{product.title}</ThemedText>
