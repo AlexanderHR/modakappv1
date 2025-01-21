@@ -85,7 +85,7 @@ cd ..
 2. Empty Product:
 <img width="300" alt="Screenshot 2025-01-21 at 09 56 37" src="https://github.com/user-attachments/assets/7ae019c8-4780-47f7-be6c-eed3fdd6f098" />
 
-3. Error Boundary:
+3. Error Boundary: (The text in red is meant to be exported and integrated with an API, such as Sentry or Firebase.)
 <img width="300" alt="Screenshot 2025-01-21 at 09 57 20" src="https://github.com/user-attachments/assets/261395d3-ed3e-4a2c-abfa-483cb92063a1" />
 
 
