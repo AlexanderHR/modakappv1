@@ -1,6 +1,6 @@
 # ModakApp
 
-[▶️ Watch Demo Video](https://vimeo.com/1048926840)
+[▶️ Watch Demo Video](https://vimeo.com/1048926840?share=copy)
 
 ## Prerequisites
 
