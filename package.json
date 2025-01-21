@@ -14,7 +14,8 @@
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test:cucumber": "cucumber-js ./e2e/* --config cucumber.config.mjs"
   },
   "jest": {
     "preset": "jest-expo",
@@ -69,8 +70,10 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@cucumber/cucumber": "^9.6.0",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^13.0.1",
+    "@types/cucumber": "^7.0.3",
     "@types/jest": "^29.5.12",
     "@types/react": "~18.3.12",
     "@types/react-test-renderer": "^18.3.0",
@@ -87,6 +90,7 @@
     "lint-staged": "^15.4.1",
     "prettier": "^3.4.2",
     "react-test-renderer": "18.3.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
   "private": true,

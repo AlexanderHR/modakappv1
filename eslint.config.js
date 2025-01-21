@@ -52,6 +52,7 @@ export default [
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
+      'no-undef': 'off',
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
