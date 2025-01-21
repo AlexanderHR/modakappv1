@@ -58,12 +58,6 @@ npx expo run:ios
 npx expo start
 ```
 
-- Run on Android:
-
-```bash
-npx expo run:android
-```
-
 ## Troubleshooting
 
 If you encounter any issues:
